@@ -29,8 +29,8 @@
         <th>Abilities</th>
         <th>Moves</th>
     </thead>
-    <tbody>
-      <tr class="pokemon0">
+    <tbody class="pokemon0">
+<!--       <tr class="pokemon0">
         <td></td>
         <td></td>
         <td></td>
@@ -89,7 +89,7 @@
         <td></td>
         <td></td>
         <td></td>
-      </tr>         
+      </tr>   -->       
     </tbody>
   </table>
     </div>
@@ -121,6 +121,8 @@
             let experience = response.base_experience;
         
             let movements = response.moves
+            // debugger;
+            addRow();
             insertPokemonName(pokemonName);
             insertExperience(experience);
             insertAbilities(abilitiesList);
@@ -135,27 +137,37 @@
       
     }
     function addRow(){
-      let row = tableContainer.insertRow(0);
-      let textnode = document.createTextNode();
-      tableContainer.appendChild(textnode);
+      let row = tableContainer.insertRow(-1);
+      for (let i = 0; i<4; i++){
+        row.insertCell(-1);
+      }
+      
+      // let textnode = document.createTextNode("");
+      // tableContainer.appendChild(textnode);
     }
     function checkWhichRow(){
 
     }
+    // function insertPokeInfo(attributeObject){
+    //   let target = document.querySelector("tbody");
+    //   let targetChildren = target.children;
+
+
+    // }
     function insertPokemonName(name){
-      let target = document.querySelector(".pokemon0");
+      let target = tableContainer.lastChild;
       target.children[0].innerHTML = name;
     }
        function insertExperience(experience){
-      let target = document.querySelector(".pokemon0");
+       let target = tableContainer.lastChild;
       target.children[1].innerHTML = experience;
     }
         function insertAbilities(abilitiesList){
-      let target = document.querySelector(".pokemon0");
+        let target = tableContainer.lastChild;
       target.children[2].innerHTML = abilitiesList;
     }
         function insertMoves(movesList){
-      let target = document.querySelector(".pokemon0");
+      let target = tableContainer.lastChild;
       target.children[3].innerHTML = movesList;
     } 
     function getAbilities(obj){
