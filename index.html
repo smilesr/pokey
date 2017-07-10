@@ -100,6 +100,7 @@
     <script>
     const butt = document.querySelector('button');
     const tableContainer = document.querySelector('tbody');
+    const pokemonList = {};
     console.log('global')
 
 
@@ -113,23 +114,24 @@
         if (this.readyState == 4 && this.status == 200)
           {
             let response = JSON.parse(this.responseText);
-            let abilitiesList = getAbilities(response);
-            
-            let movesList = getMoves(response);
-            
             let pokemonName = response.name;
-            let experience = response.base_experience;
-        
-            let movements = response.moves
+            // let abilitiesList = getAbilities(response);
+            // let movesList = getMoves(response);
+            // let pokeExperience = response.base_experience;
+
+            pokemonList[pokemonName] = {
+              "experience": response.base_experience,
+              "abilities": getAbilities(response),
+              "moves": getMoves(response)
+            }
             // debugger;
+            // let movements = response.moves;
             addRow();
             insertPokemonName(pokemonName);
-            insertExperience(experience);
-            insertAbilities(abilitiesList);
-            truncatedMovesList = movesList.slice(0,4);
-            insertMoves(truncatedMovesList);
-            console.log('bing bong')
-          
+            insertExperience(pokemonList[pokemonName].experience);
+            insertAbilities(pokemonList[pokemonName].abilities);  
+            insertMoves(pokemonList[pokemonName].moves);
+            console.log('bing bong')    
           }
         }
         httpRequest.open("GET","http://pokeapi.co/api/v2/pokemon/" + randomNumber, true);
@@ -141,9 +143,6 @@
       for (let i = 0; i<4; i++){
         row.insertCell(-1);
       }
-      
-      // let textnode = document.createTextNode("");
-      // tableContainer.appendChild(textnode);
     }
     function checkWhichRow(){
 
@@ -158,15 +157,15 @@
       let target = tableContainer.lastChild;
       target.children[0].innerHTML = name;
     }
-       function insertExperience(experience){
+    function insertExperience(experience){
        let target = tableContainer.lastChild;
       target.children[1].innerHTML = experience;
     }
-        function insertAbilities(abilitiesList){
+    function insertAbilities(abilitiesList){
         let target = tableContainer.lastChild;
       target.children[2].innerHTML = abilitiesList;
     }
-        function insertMoves(movesList){
+    function insertMoves(movesList){
       let target = tableContainer.lastChild;
       target.children[3].innerHTML = movesList;
     } 
@@ -187,22 +186,10 @@
       for (let i in mList){
         list.push(mList[i].move.name);
       }
-
-      // for (let i in obj){
-
-      //    list.push(abilities[i].move.name);
-
-      // }
-
-      return list;
+      // truncatedMovesList = movesList.slice(0,4);
+      return list.slice(0,5);
     }
-// response.abilities["0"].ability.name
-// response.moves["0"].move.name
-    // function findMoves(movesObject){
-    //   console.log('run moves')
-    //   let movesList = [];
-    //   movesObject.
-    // }
+
     function getRandom(){
       console.log('run getRandom')
       let min = Math.ceil(1);
