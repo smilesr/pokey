@@ -17,7 +17,7 @@
   <body>
     <div class="container-fluid">
       <div class="jumbotron"> 
-        <h1>POKEMON</h1>
+        <h1>POKEMON GENERATOR</h1>
               <button type="button" class="btn btn-success">Pick a Pokemon</button>
       </div>
 
@@ -30,19 +30,19 @@
         <th>Moves</th>
     </thead>
     <tbody>
-      <tr>
+      <tr class="pokemon0">
         <td></td>
         <td></td>
         <td></td>
         <td></td>
       </tr>
-      <tr>
+      <tr class="pokemon1">
         <td></td>
         <td></td>
         <td></td>
         <td></td>
       </tr>
-      <tr>
+      <tr class="pokemon2">
         <td></td>
         <td></td>
         <td></td>
@@ -99,6 +99,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
     const butt = document.querySelector('button');
+    const tableContainer = document.querySelector('tbody');
     console.log('global')
 
 
@@ -112,24 +113,84 @@
         if (this.readyState == 4 && this.status == 200)
           {
             let response = JSON.parse(this.responseText);
-            let abilitiesList = findAbilities(response.abilities);
+            let abilitiesList = getAbilities(response);
+            
+            let movesList = getMoves(response);
+            
             let pokemonName = response.name;
-            ;
-            console.log(pokemonName)
+            let experience = response.base_experience;
+        
+            let movements = response.moves
+            insertPokemonName(pokemonName);
+            insertExperience(experience);
+            insertAbilities(abilitiesList);
+            truncatedMovesList = movesList.slice(0,4);
+            insertMoves(truncatedMovesList);
+            console.log('bing bong')
+          
           }
         }
         httpRequest.open("GET","http://pokeapi.co/api/v2/pokemon/" + randomNumber, true);
         httpRequest.send();
       
     }
-    function findAbilities(abilityObject){
-      console.log('run findAbilities')
-      let abilitiesList = [];
-      abilityObject.forEach(function(x){
-        abilitiesList.push(x.ability.name);
-      })
-      return abilitiesList;
+    function addRow(){
+      let row = tableContainer.insertRow(0);
+      let textnode = document.createTextNode();
+      tableContainer.appendChild(textnode);
     }
+    function checkWhichRow(){
+
+    }
+    function insertPokemonName(name){
+      let target = document.querySelector(".pokemon0");
+      target.children[0].innerHTML = name;
+    }
+       function insertExperience(experience){
+      let target = document.querySelector(".pokemon0");
+      target.children[1].innerHTML = experience;
+    }
+        function insertAbilities(abilitiesList){
+      let target = document.querySelector(".pokemon0");
+      target.children[2].innerHTML = abilitiesList;
+    }
+        function insertMoves(movesList){
+      let target = document.querySelector(".pokemon0");
+      target.children[3].innerHTML = movesList;
+    } 
+    function getAbilities(obj){
+      console.log('run abil')
+      let list = [];
+      let aList = obj.abilities;
+      for (let i in aList){
+        list.push(aList[i].ability.name);
+      }
+
+      return list;
+    }
+    function getMoves(obj){
+      console.log('run mov')
+      let list = [];
+      let mList = obj.moves;
+      for (let i in mList){
+        list.push(mList[i].move.name);
+      }
+
+      // for (let i in obj){
+
+      //    list.push(abilities[i].move.name);
+
+      // }
+
+      return list;
+    }
+// response.abilities["0"].ability.name
+// response.moves["0"].move.name
+    // function findMoves(movesObject){
+    //   console.log('run moves')
+    //   let movesList = [];
+    //   movesObject.
+    // }
     function getRandom(){
       console.log('run getRandom')
       let min = Math.ceil(1);
