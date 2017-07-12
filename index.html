@@ -91,30 +91,28 @@
     }
     function insertPokeInfo(name){
       let target = tableContainer.lastChild;
-      // let button = document. createElement("button");
-      target.children[0].innerHTML = name;
+     
+      target.children[0].innerHTML = titleCase(name);
       target.children[1].innerHTML = pokemonList[name].experience;
-      let abilityButtons = createAttributeButtons(pokemonList[name].abilities)
+      let abilityLinks = createAnchorTags(pokemonList[name].abilities)
+      
+     
+ 
       let movesButtons = createAttributeButtons(pokemonList[name].moves)
-       
-      for (let i=0; i<abilityButtons.length; i++){
-        debugger;
-        target.lastChild.previousElementSibling.appendChild(abilityButtons[i]);
+      let counter = 0;
+      for (let key in abilityLinks){
+        target.lastChild.previousElementSibling.appendChild(abilityLinks[key]);
+        
+        if (counter !== Object.keys(abilityLinks).length-1){
+          let node = document.createTextNode(" / ");
+          target.lastChild.previousElementSibling.appendChild(node);
+        }
+        counter += 1;
+        
       }
       for (let i=0; i<movesButtons.length; i++){
         target.appendChild(movesButtons[i]);
       }
-     
-//       let button = document.createElement("button");
-//       button.innerHTML = temp;
-//       button.className += " btn-ability";
-//       target.children[2].appendChild(button);
-    
-//       // target.children[2].appendChild = temp[0];
-//       target.children[3].innerHTML = pokemonList[key].moves
-
-//       let targ = document.querySelector("#x1");
-
 
     }
     function createAttributeButtons(attributes){
@@ -123,11 +121,36 @@
         let button = document.createElement("button");
         button.innerHTML = attributes[i];
         buttons.push(button);
-      }
-    
+      }  
       return buttons;
     }
+    function titleCase(name) {
+      console.log('inside titleCase')
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+    function createAnchorTags(abilities){
+      console.log('inside createAnchorTags')
+      let anchorTagList = {};
+      abilities.forEach(function(ability){
 
+        let link = createAbilityLink(ability);
+        let anchor = document.createElement("a");
+        anchor.innerHTML = ability;
+        anchor.setAttribute("href",link);
+        anchorTagList[ability] = anchor;
+
+      })
+      console.log(anchorTagList);
+      return anchorTagList;
+    }
+    function createAbilityLink(ability){
+      console.log('inside createAbilityLink')
+        let abilityName = titleCase(ability);
+        abilityName = abilityName.replace(/-/, '_');
+        let link = "https://bulbapedia.bulbagarden.net/wiki/" + abilityName + "_(Ability)";
+        console.log('link: ' + link)
+        return link;
+    }
     function getAbilities(obj){
       console.log('run abil')
       let list = [];
