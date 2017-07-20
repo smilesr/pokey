@@ -11,19 +11,11 @@
       text-align: center;
     }
     .btn-select { 
+      margin-top: 2.5em;
       color: #ffffff; 
       background-color: pink; 
       border-color: black; 
     }
-    .btn-ability { 
-      color: #030000; 
-      background-color: #EDE6E6; 
-      border-color: #0E0D0F; 
-      width: 100%;
-      height: 100%;
-    }  
- 
-}
     </style>
 
 
@@ -32,7 +24,7 @@
     <div class="container-fluid">
       <div class="jumbotron"> 
         <h1>POKEMON GENERATOR</h1>
-              <button type="button" class="btn btn-select">Pick a Pokemon</button>
+        <button type="button" class="btn btn-select">Pick a Pokemon</button>
       </div>
 
       <table class="table table-striped table-hover">
@@ -55,166 +47,116 @@
     const butt = document.querySelector('button');
     const tableContainer = document.querySelector('tbody');
     const pokemonList = {};
-    console.log('global')
-
 
     function getPokemon(){
-      console.log('run getPokemon')
       let randomNumber = getRandom();
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = function()
-       {
-        console.log("readystate: " + this.readyState)
+      {
+        console.log("readystate: " + this.readyState);
         if (this.readyState == 4 && this.status == 200)
           {
-            let response = JSON.parse(this.responseText);
-            let pokemonName = response.name;
-            pokemonList[pokemonName] = {
-              "experience": response.base_experience,
-              "abilities": getAbilities(response),
-              "moves": getMoves(response)
-            }
-            addRow();
-            insertPokeInfo(pokemonName);
-            console.log('bing bong')    
+              let response = JSON.parse(this.responseText);
+              let pokemonName = response.name;
+              pokemonList[pokemonName] = {
+                "experience": response.base_experience,
+                "abilities": getAbilities(response),
+                "moves": getMoves(response)
+              }
+              addRow();
+              insertPokeInfo(pokemonName);
+              console.log('bing bong');
           }
-        }
+      }
         httpRequest.open("GET","http://pokeapi.co/api/v2/pokemon/" + randomNumber, true);
         httpRequest.send();
-      
+        
     }
-    function addRow(){
-      let row = tableContainer.insertRow(-1);
-      for (let i = 0; i<4; i++){
-        row.insertCell(-1);
+      function addRow(){
+        let row = tableContainer.insertRow(-1);
+        for (let i = 0; i<4; i++){
+          row.insertCell(-1);
+        }
       }
-    }
-    function insertPokeInfo(name){
-      let target = tableContainer.lastChild;   
-      target.children[0].innerHTML = capitalizeIt(name);
-      target.children[1].innerHTML = pokemonList[name].experience;
-      let abilityLinks = createAnchorTags(pokemonList[name].abilities,"Ability")
-      let moveLinks = createAnchorTags(pokemonList[name].moves, "move")
+      function insertPokeInfo(name){
+        let target = tableContainer.lastChild;   
+        target.children[0].innerHTML = capitalizeIt(name);
+        target.children[1].innerHTML = pokemonList[name].experience;
+        let abilityLinks = createAnchorTags(pokemonList[name].abilities,"Ability")
+        let moveLinks = createAnchorTags(pokemonList[name].moves, "move")
+       
+        let counter = 0;
+        for (let key in abilityLinks){
+          target.lastChild.previousElementSibling.appendChild(abilityLinks[key]); 
+          if (counter !== Object.keys(abilityLinks).length-1){
+            let node = document.createTextNode(" / ");
+            target.lastChild.previousElementSibling.appendChild(node);
+          }
+          counter += 1;   
+        }
+        counter = 0
+        for (let key in moveLinks){
+          target.lastChild.appendChild(moveLinks[key]); 
+          if (counter !== Object.keys(moveLinks).length-1){
+            let node = document.createTextNode(" / ");
+            target.lastChild.appendChild(node);
+          }
+          counter += 1;   
+        }
+      }
      
-      let counter = 0;
-      for (let key in abilityLinks){
-        target.lastChild.previousElementSibling.appendChild(abilityLinks[key]); 
-        if (counter !== Object.keys(abilityLinks).length-1){
-          let node = document.createTextNode(" / ");
-          target.lastChild.previousElementSibling.appendChild(node);
+        function restyleWord(attribute){
+        let dash = attribute.search(/-/)
+        if (dash != -1){
+          return capitalizeIt(attribute.slice(0,dash)) + "_" + capitalizeIt(attribute.slice(dash+1));
+          } else {
+          return capitalizeIt(attribute)
+          }
         }
-        counter += 1;   
+      function capitalizeIt(word){
+        return word.charAt(0).toUpperCase() + word.slice(1);
       }
-      counter = 0
-      for (let key in moveLinks){
-        target.lastChild.appendChild(moveLinks[key]); 
-        if (counter !== Object.keys(moveLinks).length-1){
-          let node = document.createTextNode(" / ");
-          target.lastChild.appendChild(node);
-        }
-        counter += 1;   
+      function createLink(attribute,type){
+        return "https://bulbapedia.bulbagarden.net/wiki/" + restyleWord(attribute) + "_(" + type + ")";
       }
-      // for (let i=0; i<movesButtons.length; i++){
-      //   target.appendChild(movesButtons[i]);
-      // }
+      function createAnchorTags(attributes,type){
+        let anchorTagList = {};
 
-    }
-    // function createAttributeButtons(attributes){
-    //   let buttons = [];
-    //   for (let i = 0; i<attributes.length; i++){
-    //     let button = document.createElement("button");
-    //     button.innerHTML = attributes[i];
-    //     buttons.push(button);
-    //   }  
-    //   return buttons;
-    // }
-    // function titleCase(name) {
-    //   console.log('inside titleCase')
-    //   return ;
-    // }
-    // function restyleWord(attribute){
-    //   let capitalizedWord = attribute.charAt(0).toUpperCase() + attribute.slice(1)
-    //   let dash = attribute.search(/-/)
-    //   let newWord = attribute.slice(dash+1)
-    //   let frontWord = attribute.slice(0,dash)
-    //   let capitalizedLetter = newWord.charAt(0).toUpperCase();
-    //   let backWord = newWord.slice(1);
-    //   let result = capitalizedLetter + backWord;
-    //   return result
-    // }
-      function restyleWord(attribute){
-      let dash = attribute.search(/-/)
-      if (dash != -1){
-        let backWord = attribute.slice(dash+1)
-        let frontWord = attribute.slice(0,dash)
-        let capitalizedFrontWord = capitalizeIt(frontWord)
-        let capitalizedBackWord = capitalizeIt(backWord);
-        return capitalizedFrontWord + "_" + capitalizedBackWord;
-      } else {
-        return capitalizeIt(attribute)
+        attributes.forEach(function(attribute){
+          let anchor = document.createElement("a");
+          anchor.innerHTML = attribute;
+          anchor.setAttribute("href",createLink(attribute,type));
+          anchor.setAttribute("target", "_blank");
+          anchorTagList[attribute] = anchor;
+        })
+        return anchorTagList;
       }
-    }
-    
-    function capitalizeIt(word){
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    }
-    function createLink(attribute,type){
-      // debugger;
-      console.log('inside createLink')
-        let attributeName = restyleWord(attribute);
-  
-        let link = "https://bulbapedia.bulbagarden.net/wiki/" + attributeName + "_(" + type + ")";
-        console.log('link: ' + link)
-        return link;
-    }
-    function createAnchorTags(attributes,type){
-      // debugger;
-      console.log('inside createAnchorTags')
-      let anchorTagList = {};
-      attributes.forEach(function(attribute){
-        let link = createLink(attribute,type);
-        let anchor = document.createElement("a");
-        anchor.innerHTML = attribute;
-        anchor.setAttribute("href",link);
-        anchor.setAttribute("target", "_blank");
-        anchorTagList[attribute] = anchor;
-      })
-      console.log(anchorTagList);
-      return anchorTagList;
-    }
-    function createAbilityLink(ability){
-      console.log('inside createAbilityLink')
-        let abilityName = titleCase(ability);
-        abilityName = abilityName.replace(/-/, '_');
-        let link = "https://bulbapedia.bulbagarden.net/wiki/" + abilityName + "_(Ability)";
-        console.log('link: ' + link)
-        return link;
-    }
-    function getAbilities(obj){
-      console.log('run abil')
-      let list = [];
-      let aList = obj.abilities;
-      for (let i in aList){
-        list.push(aList[i].ability.name);
+      function createAbilityLink(ability){ 
+          return "https://bulbapedia.bulbagarden.net/wiki/" + titleCase(ability).replace(/-/, '_') + "_(Ability)"
       }
-      return list;
-    }
-    function getMoves(obj){
-      console.log('run mov')
-      let list = [];
-      let mList = obj.moves;
-      for (let i in mList){
-        list.push(mList[i].move.name);
+      function getAbilities(obj){
+        let list = [];
+        for (let i in obj.abilities){
+          list.push(obj.abilities[i].ability.name);
+        }
+        return list;
       }
-       return list.slice(0,5);
-    }
-    function getRandom(){
-      console.log('run getRandom')
-      let min = Math.ceil(1);
-      let max = Math.floor(711);
-      return Math.floor(Math.random() * (max - min)) + min;
-    }
-    butt.addEventListener('click', getPokemon);
+      function getMoves(obj){
+        let list = [];
+        for (let i in obj.moves){
+          list.push(obj.moves[i].move.name);
+        }
+         return list.slice(0,5);
+      }
+
+      function getRandom(){
+        let min = Math.ceil(1);
+        let max = Math.floor(711);
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
+      butt.addEventListener('click', getPokemon);
+
     </script>
   </body>
 </html>
